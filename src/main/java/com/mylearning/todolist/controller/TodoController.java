@@ -1,6 +1,5 @@
 package com.mylearning.todolist.controller;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.mylearning.todolist.model.TodoItem;
 import com.mylearning.todolist.repo.TodoItems;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +44,17 @@ public class TodoController {
 
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTodo(@PathVariable Long id){
+        if(!repository.existsById(id)){
+            return ResponseEntity.notFound().build();
+        }
+        TodoItem resourceToBeDeleted = repository.getOne(id);
+        repository.delete(resourceToBeDeleted);
+
+        return ResponseEntity.ok().build();
     }
 
 }
