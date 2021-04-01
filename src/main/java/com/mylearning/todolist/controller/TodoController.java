@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +23,7 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public Optional<TodoItem> listSpecificTodo(@PathVariable Long id){
+    public Optional<TodoItem> listSpecificTodo(@PathVariable String id){
         return repository.findById(id);
     }
 
@@ -34,25 +33,23 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TodoItem> updateTodo(@RequestBody TodoItem todoItem, @PathVariable Long id){
+    public ResponseEntity<TodoItem> updateTodo(@RequestBody TodoItem todoItem, @PathVariable String id){
         if(repository.findById(todoItem.getId()).isPresent()){
-            if(id == todoItem.getId()){
+            if(id.equals(todoItem.getId())){
                 return  ResponseEntity.ok(repository.save(todoItem));
             }
             //user trying to update resource from another route
             return ResponseEntity.badRequest().build();
-
         }
         return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTodo(@PathVariable Long id){
+    public ResponseEntity<?> deleteTodo(@PathVariable String id){
         if(!repository.existsById(id)){
             return ResponseEntity.notFound().build();
         }
-        TodoItem resourceToBeDeleted = repository.getOne(id);
-        repository.delete(resourceToBeDeleted);
+        repository.deleteById(id);
 
         return ResponseEntity.ok().build();
     }
